@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>/begin?</title>
+    <style>
+      /* Style for the fade-to-white overlay */
+      #overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: white;
+          opacity: 0;
+          transition: opacity 2s ease;
+          z-index: 9999; /* Ensure the overlay is on top */
+          pointer-events: none; /* Allow clicks to pass through the overlay */
+      }
+  </style>
+    <script type="text/javascript" src="./assets/javascripts/lib/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="./assets/javascripts/lib/three.r71.min.js"></script>
+    <script type="text/javascript" src="./assets/javascripts/lib/TrackballControls.js"></script>
+    <script type="text/javascript" src="./assets/javascripts/index.js"></script>
+    <link rel="stylesheet" type="text/css" href="./assets/css/lib/normalize.css" media="all">
+    <link rel="stylesheet" type="text/css" href="./assets/css/index.css" media="all">
+  </head>
+  <body>
+    <div id="viewer">
+    </div>
+    <div class="container">
+      <div class="text">click to enter</div>
+  </div>
+  </body>
+  <audio id="click-sound" src="https://files.catbox.moe/u38511.wav"></audio> <!-- Replace with your sound file -->
+  <!-- Overlay for the fade-to-white effect -->
+  <div id="overlay"></div>
+  <script>
+      document.addEventListener('DOMContentLoaded', (event) => {
+          document.addEventListener('click', () => {
+              // Play the click sound
+              const clickSound = document.getElementById('click-sound');
+              clickSound.play();
+
+              // Fade the page to white
+              const overlay = document.getElementById('overlay');
+              overlay.style.opacity = 1;
+
+              // Wait for 2 seconds before redirecting
+              setTimeout(() => {
+                  window.location.href = './torrents.html'; // Change this URL to the destination page
+              }, 2000);
+          });
+      });
+  </script>
+</html>
