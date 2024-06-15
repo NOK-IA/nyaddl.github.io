@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/links</title>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrolling during transition */
+            background-color: white; /* Default background color */
+            transition: background-color 2s ease; /* Transition effect */
+        }
+    
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white; /* Start with white overlay */
+            opacity: 1; /* Start with full opacity */
+            transition: opacity 2s ease; /* Transition effect */
+            z-index: 9999; /* Ensure the overlay is on top */
+        }
+    </style>
+     <style>
+        .error {
+            color: red;
+            display: none;
+        }
+        .notification {
+            display: none;
+            color: green;
+        }
+    </style>
+    <style>
+       button {
+        size: 64px;
+       }
+        body {
+            padding: 20%;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.5s, color 0.5s; /* Transition effect for background color and text color */
+        background-color: white; /* Default background color */
+        color: black; /* Default text color */
+    }
+
+    .dark-mode {
+        background-color: black; /* Dark mode background color */
+        color: white; /* Dark mode text color */
+    }
+
+    .dark-mode input {
+        background-color: black; /* Dark mode input background color */
+        color: grey; /* Dark mode input text color */
+    }
+
+    .dark-mode a {
+        color: white; /* Dark mode link color */
+    }
+        h1 {
+            text-align: left;
+        }
+        #search-bar {
+            width: calc(100% - 40px); /* Subtract padding */
+            max-width: 400px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            border: none; /* Remove border */
+            border-radius: 5px; /* Optional: Add border-radius for styling */
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+            outline: none; /* Remove default focus outline */
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        a {
+            text-decoration: none;
+            color: #000000;
+            font-size: 18px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="overlay"></div>
+    <h2>NyaDDL</h2>
+    <form id="myForm">
+        <label for="name">Name (3 letters only):</label>
+        <input type="text" id="name" name="name" required minlength="3" maxlength="3" pattern="[A-Za-z]{3}">
+        <span class="error" id="nameError">You can't have this name.</span><br><br>
+        
+        <label for="file">Upload File (max 25MB):</label>
+        <input type="file" id="file" name="file" required><br><br>
+        
+        <label for="filename">File Name:</label>
+        <input type="text" id="filename" name="filename" required><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+
+    <div class="notification" id="notification">Upload sent successfully. File will be made public once verification has been completed.</div>
+
+    <h6>฿ : bc1qhh9j6pdnvk55rl3h8yz9rhvlcqd3uwtgvds9q8</h6>
+    <h6>✉ : mikaru@vp.pl</h6>
+    <button class="button-12" id="dark-mode-toggle">☁︎</button> 
+    <button onclick="window.location.href='./torrents.html';" class="button-13">⌂</button>
+    <button onclick="window.location.href='./faq.html';" class="button-13">?</button>
+    <script>
+        document.getElementById('myForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const nameField = document.getElementById('name');
+            const nameError = document.getElementById('nameError');
+            const fileField = document.getElementById('file');
+            const filenameField = document.getElementById('filename');
+            const notification = document.getElementById('notification');
+
+            if (nameField.value.toLowerCase() === 'nka') {
+                nameError.style.display = 'inline';
+                return;
+            } else {
+                nameError.style.display = 'none';
+            }
+
+            if (fileField.files[0] && fileField.files[0].size > 25 * 1024 * 1024) {
+                alert('File size must be less than 25MB.');
+                return;
+            }
+
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ipAddress = data.ip;
+
+                    const fileReader = new FileReader();
+                    fileReader.onload = function() {
+                        const fileBase64 = fileReader.result.split(',')[1];
+                        const discordWebhookURL = 'https://discord.com/api/webhooks/1251591036082458756/83t905ltuvC8Ue65M5gsrusoibQDbz_xaV5e1oaiR7ufAgPfuPnUKX_yUi_6L_Cbetox';
+
+                        const discordData = {
+                            content: null,
+                            embeds: [
+                                {
+                                    title: "Form Submission",
+                                    fields: [
+                                        { name: "Name", value: nameField.value, inline: true },
+                                        { name: "File Name", value: filenameField.value, inline: true },
+                                        { name: "IP Address", value: ipAddress, inline: true }
+                                    ]
+                                }
+                            ]
+                        };
+
+                        if (fileField.files[0]) {
+                            discordData.embeds[0].fields.push({ 
+                                name: "File", 
+                                value: `data:${fileField.files[0].type};base64,${fileBase64}` 
+                            });
+                        }
+
+                        fetch(discordWebhookURL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(discordData)
+                        }).then(response => {
+                            if (response.ok) {
+                                notification.style.display = 'block';
+                            } else {
+                                return response.text().then(text => {
+                                    alert('There was an error submitting the form.');
+                                    console.error('Error submitting form:', text);
+                                });
+                            }
+                        }).catch(error => {
+                            console.error('Error:', error);
+                            alert('There was an error submitting the form.');
+                        });
+                    };
+                    fileReader.readAsDataURL(fileField.files[0]);
+                })
+                .catch(error => {
+                    console.error('Error fetching IP address:', error);
+                    alert('There was an error fetching the IP address.');
+                });
+        });
+    </script>
+    <script>
+        
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode'); 
+        }
+    
+        
+        var darkModeToggle = document.getElementById('dark-mode-toggle');
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+    </script>
+    
+</body>
+<script>
+    
+    window.addEventListener('load', function() {
+        var overlay = document.getElementById('overlay');
+        overlay.style.opacity = '0'; 
+        setTimeout(function() {
+            overlay.style.display = 'none'; 
+            document.body.style.overflow = 'visible'; 
+        }, 2000); 
+    });
+</script>
+</html>
